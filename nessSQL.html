@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<meta charset="utf8" />
+<html>
+<head>
+<title>NessSQL</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css" integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdn.plot.ly/plotly-latest.min.js" charset="utf-8"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.5.0/sql-wasm.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js" integrity="sha512-i9pd5Q6ntCp6LwSgAZDzsrsOlE8SN+H5E0T5oumSXWQz5l1Oc4Kb5ZrXASfyjjqtc6Mg6xWbu+ePbbmiEPJlDg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/sql/sql.min.js" integrity="sha512-dfObApt1XdGl62IJLrjbIOc9QtnRORA5TCwdnJkSj6C/KjwMz2L/Sc4WlcrgAuWoY+n5xTf6NMMojoUOlgwjug==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+</head>
+<style>
+.files input {
+    outline: 4px dashed #000000;
+    outline-offset: -10px;
+    -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
+    transition: outline-offset .15s ease-in-out, background-color .15s linear;
+    padding: 120px 0px 85px 35%;
+    text-align: center !important;
+    margin: 0;
+    width: 100% !important;
+}
+.files input:focus{     outline: 4px dashed #000000;  outline-offset: -10px;
+    -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
+    transition: outline-offset .15s ease-in-out, background-color .15s linear; border:1px solid #000000;
+ }
+.files{ position:relative}
+.files:after {  pointer-events: none;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 50px;
+    right: 0;
+    height: 56px;
+    content: "";
+    background-image: url(https://image.flaticon.com/icons/png/128/109/109612.png);
+    display: block;
+    margin: 0 auto;
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+.color input{ background-color:#f1f1f1;}
+.files:before {
+    position: absolute;
+    bottom: 10px;
+    left: 0;  pointer-events: none;
+    width: 100%;
+    right: 0;
+    height: 57px;
+    content: "  drop \"*.nessus\" file here  ";
+    display: block;
+    margin: 0 auto;
+    color: #000000;
+    font-weight: 600;
+    text-align: center;
+}
+
+.darkborder {
+	border:7px solid #000000 !important;
+	margin-bottom: 10px;
+}
+
+
+
+</style>
+
+<body>
+<h1 class="font-weight-bold text-center" style="font-weight: bold;color: #000000">NessSQL</h1>
+<div class="form-group files" id="file-upload">
+<input type="file" class="form-control" multiple="" name="inputfile" id="inputfile">
+</div>
+<br>
+
+<div class="container-fluid">
+
+<div class="col-12 border rounded darkborder">
+<textarea class="col-12" id="sql_textarea">Enter your SQL queries here!</textarea>
+</div>
+
+<button class="col-12 border rounded darkborder" id="execute_query"><h2>Execute!</h2></button>
+<b class="font-weight-bold text-center" style="font-weight: bold;color: #000000">
+
+
+<p class="col-12" onclick="editor.getDoc().setValue(this.getAttribute('query'));" query="select distinct host.host_ip,report_item.port,report_item.protocol,report_item.svc_name from host &#10;&#09;join report_item on host.host_ip=report_item.host_ip &#10;&#09;and not report_item.port = '0' &#10;&#09;order by host.host_ip ASC;">Get hosts and services</p>
+<p class="col-12" onclick="editor.getDoc().setValue(this.getAttribute('query'));" query="select host_ip,GROUP_CONCAT(port,';') from &#10;&#09;(select distinct host.host_ip,report_item.port from host &#10;&#09;join report_item on host.host_ip=report_item.host_ip &#10;&#09;and not report_item.port = '0' &#10;&#09;order by report_item.port ASC) &#10;&#09;group by host_ip;">Get ports grouped by hosts</p>
+<p class="col-12" onclick="editor.getDoc().setValue(this.getAttribute('query'));" query="select distinct host.host_ip,report_item.port,report_item.protocol,report_item.svc_name,plugin.plugin_name from host &#10;&#09;join report_item on host.host_ip=report_item.host_ip &#10;&#09;join plugin on report_item.plugin_id=plugin.plugin_id &#10;&#09;and not report_item.port = '0' &#10;&#09;and (plugin.plugin_name LIKE '%TLS%' or  plugin.plugin_name LIKE '%SSL%') &#10;&#09;order by host.host_ip ASC;">Get host information by plugin name</p>
+<p class="col-12" onclick="editor.getDoc().setValue(this.getAttribute('query'));" query="select distinct host.host_ip,report_item.port,report_item.protocol,report_item.svc_name,plugin.plugin_name from host &#10;&#09;join report_item on host.host_ip=report_item.host_ip &#10;&#09;join plugin on report_item.plugin_id=plugin.plugin_id &#10;&#09;and plugin.severity>1 &#10;&#09;order by host.host_ip ASC;">Get host information by severity</p>
+
+</b>
+
+
+<table class="col-12 border darkborder rounded" id="result_table"><table>
+
+</div>
+
+
+
+<script type="text/javascript">
+scans = [];
+
+scan_results = {};
+
+var db;
+
+config = {
+  locateFile: filename => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.5.0/${filename}`
+}
+
+initSqlJs(config).then(function(SQL){
+
+	db = new SQL.Database();
+	db.run(`CREATE TABLE host (
+		host_ip text PRIMARY KEY,
+		os text DEFAULT NULL,
+		operating_system text DEFAULT NULL,
+		host_rdns text DEFAULT NULL,
+		cpe text DEFAULT NULL,
+		cpe_0 text DEFAULT NULL	
+	);`);
+
+	db.run(`CREATE TABLE plugin (
+		plugin_id integer NOT NULL PRIMARY KEY,
+		severity integer DEFAULT NULL,
+		risk_factor text DEFAULT NULL,
+		plugin_name text DEFAULT NULL,
+		plugin_family text DEFAULT NULL,
+		synopsis text DEFAULT NULL,
+		description text DEFAULT NULL,
+		solution text DEFAULT NULL,
+		cvss3_base_score text DEFAULT NULL,
+		cvss3_vector text DEFAULT NULL,
+		cvss3_temporal_score text DEFAULT NULL,
+		cvss3_temporal_vector text DEFAULT NULL,
+		cvss_base_score text DEFAULT NULL,
+		cvss_vector text DEFAULT NULL,
+		cvss_temporal_score text DEFAULT NULL,
+		cvss_temproal_vector text DEFAULT NULL,
+		see_also text DEFAULT NULL,
+		plugin_publication_date text DEFAULT NULL,
+		plugin_modification_date text DEFAULT NULL,
+		cve text DEFAULT NULL,
+		exploit_available text DEFAULT NULL,
+		exploitability_ease text DEFAULT NULL,
+		plugin_type text DEFAULT NULL,
+		stig_severity text DEFAULT NULL,
+		script_version text DEFAULT NULL,
+		iavb text DEFAULT NULL,
+		patch_publication_date text DEFAULT NULL,
+		xref text DEFAULT NULL,
+		fname text DEFAULT NULL
+	);`);
+	
+	db.run(`CREATE TABLE report_item (
+		report_item_id integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+		host_ip text NOT NULL,
+		plugin_id integer NOT NULL,
+		port integer NOT NULL,
+		plugin_output NOT NULL,
+		protocol text NOT NULL,
+		svc_name text NOT NULL,
+		FOREIGN KEY (host_ip) REFERENCES host (host_ip) ON DELETE NO ACTION ON UPDATE NO ACTION
+		FOREIGN KEY (plugin_id) REFERENCES plugin (plugin_id) ON DELETE NO ACTION ON UPDATE NO ACTION
+	);`);
+	
+	console.log("Created db schema!")
+});
+
+function parse_nessus_scan(scan_xml) {
+
+	$(scan_xml).find("ReportHost").each(function (i,host) {
+
+		$(host).children().each(function (j,host_item) {
+			
+			if(host_item.nodeName == "HostProperties"){
+
+				db.run("INSERT OR REPLACE INTO host VALUES (?,?,?,?,?,?)",[
+					$(host).attr("name"),
+					$(host_item).find('tag[name="os"]').text(),
+					$(host_item).find('tag[name="operating_system"]').text(),
+					$(host_item).find('tag[name="host_rnds"]').text(),
+					$(host_item).find('tag[name="cpe"]').text(),
+					$(host_item).find('tag[name="cpe_0"]').text()
+				]);
+				
+			} else if(host_item.nodeName == "ReportItem") {
+
+				db.run("INSERT OR REPLACE INTO plugin VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",[
+					$(host_item).attr("pluginID"),
+					$(host_item).attr("severity"),
+					$(host_item).find("risk_factor").text(),
+					$(host_item).attr("pluginName"),
+					$(host_item).attr("pluginFamily"),
+					$(host_item).find("synopsis").text(),
+					$(host_item).find("description").text(),
+					$(host_item).find("solution").text(),
+					$(host_item).find("cvss3_base_score").text(),
+					$(host_item).find("cvss3_vector").text(),
+					$(host_item).find("cvss3_temporal_score").text(),
+					$(host_item).find("cvss3_temporal_vector").text(),
+					$(host_item).find("cvss_base_score").text(),
+					$(host_item).find("cvss_vector").text(),
+					$(host_item).find("cvss_temporal_score").text(),
+					$(host_item).find("cvss_temproal_vector").text(),
+					$(host_item).find("see_also").text(),
+					$(host_item).find("plugin_publication_date").text(),
+					$(host_item).find("plugin_modification_date").text(),
+					$(host_item).find("cve").text(),
+					$(host_item).find("exploit_available").text(),
+					$(host_item).find("exploitability_ease").text(),
+					$(host_item).find("plugin_type").text(),
+					$(host_item).find("stig_severity").text(),
+					$(host_item).find("script_version").text(),
+					$(host_item).find("iavb").text(),
+					$(host_item).find("patch_publication_date").text(),
+					$(host_item).find("xref").text(),
+					$(host_item).find("fname").text()
+				]);	
+				
+				db.run("INSERT OR REPLACE INTO report_item (report_item_id,host_ip,plugin_id,port,plugin_output,protocol,svc_name) VALUES ((select report_item_id from report_item where report_item_id=?),?,?,?,?,?,?)",[
+					$(host).attr("name"),
+					$(host).attr("name"),
+					$(host_item).attr("pluginID"),
+					$(host_item).attr("port"),
+					$(host_item).find("plugin_output").text(),
+					$(host_item).attr("protocol"),
+					$(host_item).attr("svc_name")		
+					
+				]);			
+			}
+		});
+	});
+	
+	console.log("Done importing!");
+}
+
+function parse_scan(scan_xml) {
+
+	//implement more than one format (e.g. nmap)
+	parse_nessus_scan(scan_xml);
+
+}
+
+//file reader
+document.getElementById('inputfile').addEventListener('change', function() {
+  
+	var file_reader=new FileReader();
+	file_reader.onload=function(){
+		scan_xml_report = file_reader.result;
+		scan_xml = $.parseXML(scan_xml_report,"text/xml");
+		scans.push({"type":"nessus","scan_xml":scan_xml});
+		parse_scan(scan_xml);
+	}
+	
+	file_reader.readAsText(this.files[0]);
+});
+
+$("#execute_query").click(function() {
+
+	execute_sql();
+
+});
+
+function execute_sql() {
+
+	
+	query = editor.getValue() + ';';
+	console.log(query);
+	result_table = db.exec(query);
+	
+	$("#result_table").empty();
+	table_header = "<tr>";
+	
+	for(i = 0;i < result_table[0]["columns"].length;i++) {
+	
+		table_header += '<th>' + result_table[0]["columns"][i] + '</th>';
+	
+	}
+	
+	table_header += "</tr>";
+	$("#result_table").append(table_header);
+	
+	for(i = 0;i < result_table[0]["values"].length;i++) {
+	
+		table_data = "<tr>";
+		
+		for(j = 0;j < result_table[0]["values"][i].length;j++) {
+	
+			table_data += '<td>' + result_table[0]["values"][i][j] + '</td>';
+	
+		}
+		
+		table_data += "</tr>";
+		$("#result_table").append(table_data);
+	}
+	
+	
+}
+
+var editor = CodeMirror.fromTextArea(document.getElementById('sql_textarea'), {
+	mode: 'text/x-mysql',
+	viewportMargin: Infinity,
+	indentWithTabs: true,
+	smartIndent: true,
+	lineNumbers: true,
+	matchBrackets: true,
+	autofocus: true,
+
+});
+
+</script>
+</body>
+  
+</html>
