@@ -10,62 +10,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.5.0/sql-wasm.js"></script> 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js" integrity="sha512-i9pd5Q6ntCp6LwSgAZDzsrsOlE8SN+H5E0T5oumSXWQz5l1Oc4Kb5ZrXASfyjjqtc6Mg6xWbu+ePbbmiEPJlDg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/sql/sql.min.js" integrity="sha512-dfObApt1XdGl62IJLrjbIOc9QtnRORA5TCwdnJkSj6C/KjwMz2L/Sc4WlcrgAuWoY+n5xTf6NMMojoUOlgwjug==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+<style>.files input{outline:4px dashed #000;outline-offset:-10px;-webkit-transition:outline-offset .15s ease-in-out,background-color .15s linear;transition:outline-offset .15s ease-in-out,background-color .15s linear;padding:120px 0 85px 35%;text-align:center!important;margin:0;width:100%!important}.files input:focus{outline:4px dashed #000;outline-offset:-10px;-webkit-transition:outline-offset .15s ease-in-out,background-color .15s linear;transition:outline-offset .15s ease-in-out,background-color .15s linear;border:1px solid #000}.files{position:relative}.files:after{pointer-events:none;position:absolute;top:60px;left:0;width:50px;right:0;height:56px;content:"";background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAA3NCSVQICAjb4U/gAAAACXBIWXMAACp5AAAqeQFmoi32AAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAPBQTFRF////HiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdHiAdn+sWnAAAAE90Uk5TAAECAwQICgsWGBodKSwyMzY4P0FERktOT1FXWVtcXV5fYGFiY2RlZmdobnJ2eHp+ho6ot7i/xMbIyszNzs/X2dze4OPp6/Dx8/T1+vz9/gveScgAAAIPSURBVHja7dtZU8IwFIbh476vuIuIogju+y4KLqBC8///jdBWKCWJNmmIznzngl50wvsM0GHaaYn++YyNWc1P3DN2N26vP1Rk9XkcsAZYYu7MWQPse4Ada4ADD5AHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATDYWHirXs6qAxE3ldl6z3wjUNtUAmVp9p5PQAjwwmUAOyDju3gstQIXJBFKA32fPWoBr5gs2ogK2/D471wLM1mQCCaDZr07r/Qq/P0iuQAxo9ZO6x6FMIATE2A8K0r8FbMfZlwkEgGa/FktfIuADWv01IrMCLiAbfz8oWP8JYKQvEnAAhvoCQSeg1U8RmRKkxIAdc32uIAww2ucJQgDDfY6gHZAz3Q8K1joBOf6halQQBHSlHxYEAF3qBwXJICDfrX67oAnIi/+yfzF9o2qCavIboNjvGe2tv/YevbOXtJrgytteqvWzr6y83+PfFbmoJAhNtP6yu2aXntztGekLIn7/Z+6iAnnvVSRtAf/UQTzuHbnMIW91iXQFUftU8tYpAjoEkfu6gJAgel8b0CYQnsCbBAQEKv0YAE2BUj8OgC9Q68cCoNUyY2+rZA9AIysrw2QToDEAAAAAAAAAAAAAAPwxwMdp1+ejDWBv7AMcu33Hv0RjbQp0aBewR/0nVXv5z+PGlcLBqRlLM2nvofHWfAEs4xVXJqAXbAAAAABJRU5ErkJggg==);display:block;margin:0 auto;background-size:100%;background-repeat:no-repeat}.color input{background-color:#f1f1f1}.files:before{position:absolute;bottom:10px;left:0;pointer-events:none;width:100%;right:0;height:57px;content:"  drop \"*.nessus\" file here  ";display:block;margin:0 auto;color:#000;font-weight:600;text-align:center}.darkborder{border:7px solid #000!important;margin-bottom:10px}</style>
+	
 </head>
-<style>
-.files input {
-    outline: 4px dashed #000000;
-    outline-offset: -10px;
-    -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
-    transition: outline-offset .15s ease-in-out, background-color .15s linear;
-    padding: 120px 0px 85px 35%;
-    text-align: center !important;
-    margin: 0;
-    width: 100% !important;
-}
-.files input:focus{     outline: 4px dashed #000000;  outline-offset: -10px;
-    -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
-    transition: outline-offset .15s ease-in-out, background-color .15s linear; border:1px solid #000000;
- }
-.files{ position:relative}
-.files:after {  pointer-events: none;
-    position: absolute;
-    top: 60px;
-    left: 0;
-    width: 50px;
-    right: 0;
-    height: 56px;
-    content: "";
-    background-image: url(https://image.flaticon.com/icons/png/128/109/109612.png);
-    display: block;
-    margin: 0 auto;
-    background-size: 100%;
-    background-repeat: no-repeat;
-}
-.color input{ background-color:#f1f1f1;}
-.files:before {
-    position: absolute;
-    bottom: 10px;
-    left: 0;  pointer-events: none;
-    width: 100%;
-    right: 0;
-    height: 57px;
-    content: "  drop \"*.nessus\" file here  ";
-    display: block;
-    margin: 0 auto;
-    color: #000000;
-    font-weight: 600;
-    text-align: center;
-}
-
-.darkborder {
-	border:7px solid #000000 !important;
-	margin-bottom: 10px;
-}
-
-
-
-</style>
 
 <body>
 <h1 class="font-weight-bold text-center" style="font-weight: bold;color: #000000">NessSQL</h1>
