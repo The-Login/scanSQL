@@ -75,38 +75,38 @@
 		            description text DEFAULT NULL,
 		            solution text DEFAULT NULL,
 		            cvss3_base_score text DEFAULT NULL,
-	            	cvss3_vector text DEFAULT NULL,
-	            	cvss3_temporal_score text DEFAULT NULL,
-	            	cvss3_temporal_vector text DEFAULT NULL,
-	            	cvss_base_score text DEFAULT NULL,
-	            	cvss_vector text DEFAULT NULL,
-	            	cvss_temporal_score text DEFAULT NULL,
+		            cvss3_vector text DEFAULT NULL,
+		            cvss3_temporal_score text DEFAULT NULL,
+		            cvss3_temporal_vector text DEFAULT NULL,
+		            cvss_base_score text DEFAULT NULL,
+		            cvss_vector text DEFAULT NULL,
+		            cvss_temporal_score text DEFAULT NULL,
 		            cvss_temproal_vector text DEFAULT NULL,
 		            see_also text DEFAULT NULL,
-	            	plugin_publication_date text DEFAULT NULL,
-	            	plugin_modification_date text DEFAULT NULL,
+		            plugin_publication_date text DEFAULT NULL,
+		            plugin_modification_date text DEFAULT NULL,
 		            cve text DEFAULT NULL,
-	            	exploit_available text DEFAULT NULL,
-	            	exploitability_ease text DEFAULT NULL,
-	            	plugin_type text DEFAULT NULL,
-	            	stig_severity text DEFAULT NULL,
+		            exploit_available text DEFAULT NULL,
+		            exploitability_ease text DEFAULT NULL,
+		            plugin_type text DEFAULT NULL,
+		            stig_severity text DEFAULT NULL,
 		            script_version text DEFAULT NULL,
-	            	iavb text DEFAULT NULL,
-	            	patch_publication_date text DEFAULT NULL,
-	            	xref text DEFAULT NULL,
-	            	fname text DEFAULT NULL
+		            iavb text DEFAULT NULL,
+		            patch_publication_date text DEFAULT NULL,
+		            xref text DEFAULT NULL,
+		            fname text DEFAULT NULL
             	);`);
 	
 	            db.run(`CREATE TABLE report_item (
 		            report_item_id integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-	            	host_ip text NOT NULL,
-	            	plugin_id integer NOT NULL,
-	            	port integer NOT NULL,
-		        	plugin_output NOT NULL,
-		        	protocol text NOT NULL,
-		        	svc_name text NOT NULL,
-		        	FOREIGN KEY (host_ip) REFERENCES host (host_ip) ON DELETE NO ACTION ON UPDATE NO ACTION
-		        	FOREIGN KEY (plugin_id) REFERENCES plugin (plugin_id) ON DELETE NO ACTION ON UPDATE NO ACTION
+		            host_ip text NOT NULL,
+		            plugin_id integer NOT NULL,
+		            port integer NOT NULL,
+		            plugin_output NOT NULL,
+		            protocol text NOT NULL,
+		            svc_name text NOT NULL,
+		            FOREIGN KEY (host_ip) REFERENCES host (host_ip) ON DELETE NO ACTION ON UPDATE NO ACTION
+		            FOREIGN KEY (plugin_id) REFERENCES plugin (plugin_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 	        	);`);
 	
                 console.log("Created db schema!");
