@@ -1,6 +1,6 @@
 # nessSQL
 
-Query nessus reports via SQL!
+Merge & query nmap and nessus reports via SQL!
 
 ## Usage
 
