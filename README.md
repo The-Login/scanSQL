@@ -1,4 +1,4 @@
-# nessSQL
+# scanSQL
 
 Merge & query nmap and nessus reports via SQL!
 
